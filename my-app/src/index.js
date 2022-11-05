@@ -4,11 +4,12 @@ import './index.css';
 
 function Square(props) {
     return (
-      <button className="square" onClick={props.passClick} onMouseMove={props.passWinnner}>
+      <button className="square" onClick={props.passClick}>
          {props.value}
       </button>
 );
 }
+
 
 
 class Board extends React.Component {
@@ -60,35 +61,42 @@ class Board extends React.Component {
 
     }
 
-    CheckwhoWon(){
-        const squares = this.state.squares.slice();
+    CheckwhoWon(i){
+        let squares = this.handleClick(i);
         const whoWon = this.CheckIfStrike(squares);
         if (whoWon) {
             console.log("Voila! " + whoWon + " has won the Match!");
-            alert("Voila! " + whoWon + " has won the Match!");
+            setTimeout(function() { alert("Voila! " + whoWon + " has won the Match!")}, 0);
+            // (async () => {
+            //   console.log(await alert("Voila! " + whoWon + " has won the Match!"));
+            // })();
+          
+            this.setState({
+              whoWon: whoWon
+            });
         }
 
     }
 
     handleClick(i) {
         const squares = this.state.squares.slice();
-        squares[i] = this.state.lastWasX ? 'o' : 'x';
-        this.setState({
-          squares: squares,
-          lastWasX: !this.state.lastWasX,
-        });
-        // debugger;
-        console.log(this.state.lastWasX, this.state.squares, this.state.whoWon)
-      }
-    
+        if (!squares[i]){
+          squares[i] = this.state.lastWasX ? 'o' : 'x';
+          this.setState({
+            squares: squares,
+            lastWasX: !this.state.lastWasX,
+          });
+        }
+        console.log('second', this.state.lastWasX, 'state squares ->', this.state.squares, 'squares ->', squares, this.state.whoWon)
+        return squares;
+    }
 
 
     renderSquare(i) {
         return (
             <Square 
                 value={this.state.squares[i]}
-                passClick={() => this.handleClick(i)}
-                passWinnner={() => this.CheckwhoWon()}
+                passClick={() => this.CheckwhoWon(i)}
             />
         );
     }
